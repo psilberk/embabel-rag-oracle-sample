@@ -1,0 +1,15 @@
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@//localhost:1521/FREEPDB1
+    username: embabel
+    password: embabel
+    driver-class-name: oracle.jdbc.OracleDriver
+
+embabel:
+  rag:
+    oracle:
+      name: oracle-store
+      schema-name: EMBABEL
+      content-element-table: CONTENT_ELEMENTS
+      embedding-dimension: 3
+      similarity-threshold-ceiling: 0.5
