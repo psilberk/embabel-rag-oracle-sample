@@ -1,15 +1,23 @@
 spring:
   datasource:
     url: jdbc:oracle:thin:@//localhost:1521/FREEPDB1
-    username: embabel
-    password: embabel
+    username: scott
+    password: tiger
     driver-class-name: oracle.jdbc.OracleDriver
+  ai:
+    ollama:
+      base-url: http://localhost:11434
+      chat:
+        options:
+          model: llama3.2:latest
 
 embabel:
+  models:
+    defaultLlm: llama3.2:latest
   rag:
     oracle:
       name: oracle-store
-      schema-name: EMBABEL
-      content-element-table: CONTENT_ELEMENTS
-      embedding-dimension: 3
-      similarity-threshold-ceiling: 0.5
+      schemaName: scott
+      contentElementTable: CONTENT_ELEMENTS
+      embeddingDimension: 3
+      similarityThresholdCeiling: 0.5
