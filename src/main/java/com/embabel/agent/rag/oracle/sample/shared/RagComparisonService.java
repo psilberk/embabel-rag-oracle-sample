@@ -1,6 +1,10 @@
 package com.embabel.agent.rag.oracle.sample.shared;
 
 import com.embabel.agent.rag.oracle.OracleVectorStore;
+import com.embabel.agent.rag.model.Chunk;
+import com.embabel.common.ai.model.EmbeddingService;
+import com.embabel.common.core.types.SimilarityResult;
+import com.embabel.common.core.types.TextSimilaritySearchRequest;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
@@ -9,12 +13,12 @@ import org.springframework.stereotype.Service;
 public class RagComparisonService {
 
     private final OracleVectorStore store;
-    private final SimpleEmbeddingService embeddingService;
+    private final EmbeddingService embeddingService;
     private final LlmAnswerService llmAnswerService;
 
     public RagComparisonService(
         OracleVectorStore store,
-        SimpleEmbeddingService embeddingService,
+        EmbeddingService embeddingService,
         LlmAnswerService llmAnswerService
     ) {
         this.store = store;
@@ -24,9 +28,14 @@ public class RagComparisonService {
 
     public SearchResponse search(String question, int topK) {
         float[] queryEmbedding = embeddingService.embed(question);
-        List<OracleVectorStore.VectorMatch> matches = store.vectorSearch(queryEmbedding, topK, 0.0);
+        TextSimilaritySearchRequest request = TextSimilaritySearchRequest.create(question, 0.1, topK);
+        List<SimilarityResult<Chunk>> matches = store.vectorSearch(request, Chunk.class);
         List<SearchHit> hits = matches.stream()
-            .map(m -> new SearchHit(m.getId(), m.getScore(), m.getText()))
+            .map(result -> new SearchHit(
+                result.getMatch().getId(),
+                result.getScore(),
+                result.getMatch().getText()
+            ))
             .collect(Collectors.toList());
         return new SearchResponse(question, queryEmbedding, hits);
     }

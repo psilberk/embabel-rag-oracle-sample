@@ -4,31 +4,35 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>com.embabel.build</groupId>
+        <artifactId>embabel-build-parent</artifactId>
+        <version>2.0.2</version>
+        <relativePath/>
+    </parent>
+
     <groupId>com.embabel.rag</groupId>
     <artifactId>embabel-rag-oracle-sample</artifactId>
     <version>0.1.0-SNAPSHOT</version>
 
     <name>Embabel RAG Oracle Sample</name>
     <description>CLI and UI samples for embabel-rag-oracle</description>
+    <url>https://github.com/psilberk/embabel-rag-oracle-sample</url>
+
+    <scm>
+        <connection>scm:git:https://github.com/psilberk/embabel-rag-oracle-sample.git</connection>
+        <developerConnection>scm:git:git@github.com:psilberk/embabel-rag-oracle-sample.git</developerConnection>
+        <url>https://github.com/psilberk/embabel-rag-oracle-sample</url>
+        <tag>HEAD</tag>
+    </scm>
 
     <properties>
-        <java.version>21</java.version>
-        <spring-boot.version>3.5.0</spring-boot.version>
-        <embabel-agent.version>0.4.0-SNAPSHOT</embabel-agent.version>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>${java.version}</maven.compiler.release>
+        <embabel-agent.version>1.5.2</embabel-agent.version>
+        <application.main-class>com.embabel.agent.rag.oracle.sample.ui.OracleUiSampleApplication</application.main-class>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring-boot.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-
             <dependency>
                 <groupId>com.embabel.agent</groupId>
                 <artifactId>embabel-agent-dependencies</artifactId>
@@ -49,12 +53,6 @@
         <dependency>
             <groupId>com.embabel.agent</groupId>
             <artifactId>embabel-agent-starter-ollama</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework.ai</groupId>
-            <artifactId>spring-ai-starter-model-ollama</artifactId>
-            <version>1.1.5</version>
         </dependency>
 
         <dependency>
@@ -88,6 +86,12 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
@@ -95,16 +99,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.14.0</version>
-                <configuration>
-                    <release>${java.version}</release>
-                </configuration>
             </plugin>
 
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
+                <configuration>
+                    <mainClass>${application.main-class}</mainClass>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -115,6 +117,15 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>cli</id>
+            <properties>
+                <application.main-class>com.embabel.agent.rag.oracle.sample.cli.OracleSampleApplication</application.main-class>
+            </properties>
+        </profile>
+    </profiles>
 
     <repositories>
         <repository>
@@ -133,6 +144,10 @@
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
+        </repository>
+        <repository>
+            <id>spring-milestones</id>
+            <url>https://repo.spring.io/milestone</url>
         </repository>
     </repositories>
 

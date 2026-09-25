@@ -1,25 +1,34 @@
 package com.embabel.agent.rag.oracle.sample.cli;
 
 import com.embabel.agent.rag.oracle.OracleVectorStore;
+import com.embabel.agent.rag.model.Chunk;
+import com.embabel.common.core.types.SimilarityResult;
+import com.embabel.common.core.types.TextSimilaritySearchRequest;
 import java.util.List;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
-@SpringBootApplication(scanBasePackages = "com.embabel.agent.rag.oracle.sample")
+@SpringBootApplication(scanBasePackages = {
+    "com.embabel.agent.rag.oracle.sample.cli",
+    "com.embabel.agent.rag.oracle.sample.shared"
+})
 public class OracleSampleApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(OracleSampleApplication.class, args);
+        SpringApplication application = new SpringApplication(OracleSampleApplication.class);
+        application.setWebApplicationType(WebApplicationType.NONE);
+        application.run(args);
     }
 
     @Bean
     CommandLineRunner demo(OracleVectorStore store) {
         return args -> {
             String query = "How does Oracle vector search work?";
-            float[] queryEmbedding = new float[]{0.85f, 0.10f, 0.05f};
-            List<OracleVectorStore.VectorMatch> matches = store.vectorSearch(queryEmbedding, 5, 0.0);
+            TextSimilaritySearchRequest request = TextSimilaritySearchRequest.create(query, 0.1, 5);
+            List<SimilarityResult<Chunk>> matches = store.vectorSearch(request, Chunk.class);
 
             System.out.println("Query: " + query);
             if (matches.isEmpty()) {
@@ -28,8 +37,13 @@ public class OracleSampleApplication {
             }
 
             System.out.println("Top matches:");
-            for (OracleVectorStore.VectorMatch match : matches) {
-                System.out.printf("- id=%s score=%.4f text=%s%n", match.getId(), match.getScore(), match.getText());
+            for (SimilarityResult<Chunk> match : matches) {
+                System.out.printf(
+                    "- id=%s score=%.4f text=%s%n",
+                    match.getMatch().getId(),
+                    match.getScore(),
+                    match.getMatch().getText()
+                );
             }
         };
     }

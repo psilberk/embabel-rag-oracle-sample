@@ -44,7 +44,7 @@ CREATE TABLE scott.CONTENT_ELEMENTS (
       'Oracle vector indexing improves similarity search by avoiding full table scans. '
       || 'Instead of comparing every stored embedding, the index narrows the candidate set '
       || 'so nearest-neighbor lookups can return top matches with much lower latency.',
-      TO_VECTOR('[0.94,0.04,0.02]'),
+      TO_VECTOR('[1,0,0]'),
       '{"topic":"oracle-vector-index","section":"overview","source":"manual"}'
     );
 
@@ -55,7 +55,7 @@ CREATE TABLE scott.CONTENT_ELEMENTS (
       'Oracle uses an in-memory neighbor graph for approximate nearest-neighbor search. '
       || 'This HNSW-style structure trades a small amount of recall for faster query time, '
       || 'which is usually a good fit for interactive RAG retrieval workloads.',
-      TO_VECTOR('[0.90,0.07,0.03]'),
+      TO_VECTOR('[1,0,0]'),
       '{"topic":"oracle-vector-index","section":"hnsw","source":"manual"}'
     );
 
@@ -66,7 +66,7 @@ CREATE TABLE scott.CONTENT_ELEMENTS (
       'Vector indexes improve speed but consume memory. If memory is too constrained, '
       || 'index creation can fail with ORA-51962. In that case, retrieval can still run '
       || 'without the index, but query performance will be slower as data volume grows.',
-      TO_VECTOR('[0.88,0.09,0.03]'),
+      TO_VECTOR('[1,0,0]'),
       '{"topic":"oracle-vector-index","section":"tradeoffs","source":"manual"}'
     );
 
@@ -77,7 +77,7 @@ CREATE TABLE scott.CONTENT_ELEMENTS (
       'Cosine distance compares direction between vectors rather than raw magnitude. '
       || 'For text embeddings, cosine is commonly used because semantically similar text '
       || 'tends to produce vectors with similar direction.',
-      TO_VECTOR('[0.82,0.14,0.04]'),
+      TO_VECTOR('[0,0,1]'),
       '{"topic":"vector-distance","section":"cosine","source":"manual"}'
     );
 
@@ -88,7 +88,7 @@ CREATE TABLE scott.CONTENT_ELEMENTS (
       'In a RAG pipeline, Oracle vector retrieval is the grounding step: it fetches '
       || 'relevant chunks that are injected into the LLM prompt. Better chunk quality and '
       || 'better embeddings usually improve factual quality of generated answers.',
-      TO_VECTOR('[0.86,0.11,0.03]'),
+      TO_VECTOR('[0,1,0]'),
       '{"topic":"rag","section":"grounding","source":"manual"}'
     );
 

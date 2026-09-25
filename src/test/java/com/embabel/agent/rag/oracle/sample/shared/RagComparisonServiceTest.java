@@ -1,6 +1,9 @@
 package com.embabel.agent.rag.oracle.sample.shared;
 
 import com.embabel.agent.rag.oracle.OracleVectorStore;
+import com.embabel.agent.rag.model.Chunk;
+import com.embabel.common.core.types.SimilarityResult;
+import com.embabel.common.core.types.TextSimilaritySearchRequest;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -15,15 +18,21 @@ class RagComparisonServiceTest {
     @Test
     void answerWithRagIncludesRetrievedContext() {
         OracleVectorStore store = mock(OracleVectorStore.class);
-        SimpleEmbeddingService embeddingService = new SimpleEmbeddingService();
+        DemoEmbeddingService embeddingService = new DemoEmbeddingService();
         LlmAnswerService llmAnswerService = mock(LlmAnswerService.class);
 
-        List<OracleVectorStore.VectorMatch> matches = List.of(
-            new OracleVectorStore.VectorMatch("doc-1", "urn:1", "oracle vector index note", Map.of(), 0.91),
-            new OracleVectorStore.VectorMatch("doc-2", "urn:2", "rag pipeline note", Map.of(), 0.77)
+        List<SimilarityResult<Chunk>> matches = List.of(
+            SimilarityResult.create(
+                Chunk.create("oracle vector index note", "root", Map.of(), "doc-1", "oracle vector index note"),
+                0.91
+            ),
+            SimilarityResult.create(
+                Chunk.create("rag pipeline note", "root", Map.of(), "doc-2", "rag pipeline note"),
+                0.77
+            )
         );
 
-        when(store.vectorSearch(ArgumentMatchers.any(float[].class), ArgumentMatchers.eq(3), ArgumentMatchers.eq(0.0)))
+        when(store.vectorSearch(ArgumentMatchers.any(TextSimilaritySearchRequest.class), ArgumentMatchers.eq(Chunk.class)))
             .thenReturn(matches);
         when(llmAnswerService.generate(ArgumentMatchers.contains("Context:")))
             .thenReturn("LLM RAG answer");
@@ -42,7 +51,7 @@ class RagComparisonServiceTest {
         LlmAnswerService llmAnswerService = mock(LlmAnswerService.class);
         when(llmAnswerService.generate(ArgumentMatchers.anyString())).thenReturn("LLM plain answer");
 
-        RagComparisonService service = new RagComparisonService(store, new SimpleEmbeddingService(), llmAnswerService);
+        RagComparisonService service = new RagComparisonService(store, new DemoEmbeddingService(), llmAnswerService);
 
         RagComparisonService.AnswerResponse response = service.answerWithoutRag("hello");
 

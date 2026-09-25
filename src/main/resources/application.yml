@@ -1,23 +1,22 @@
 spring:
   datasource:
-    url: jdbc:oracle:thin:@//localhost:1521/FREEPDB1
-    username: scott
-    password: tiger
+    url: ${ORACLE_JDBC_URL:jdbc:oracle:thin:@//localhost:1521/FREEPDB1}
+    username: ${ORACLE_USERNAME:scott}
+    password: ${ORACLE_PASSWORD:tiger}
     driver-class-name: oracle.jdbc.OracleDriver
   ai:
     ollama:
-      base-url: http://localhost:11434
-      chat:
-        options:
-          model: llama3.2:latest
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
 
 embabel:
   models:
-    defaultLlm: llama3.2:latest
+    default-llm: ${OLLAMA_MODEL:llama3.2:latest}
   rag:
     oracle:
       name: oracle-store
-      schemaName: scott
-      contentElementTable: CONTENT_ELEMENTS
-      embeddingDimension: 3
-      similarityThresholdCeiling: 0.5
+      schema-name: scott
+      content-element-table: CONTENT_ELEMENTS
+      similarity-threshold-ceiling: 0.5
+      initialize-schema: true
+      # The demo works with exact search and avoids ORA-51962 on small local databases.
+      create-vector-index: false
