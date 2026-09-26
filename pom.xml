@@ -5,21 +5,54 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>com.embabel.rag</groupId>
-        <artifactId>embabel-rag-oracle-parent</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
+        <groupId>com.embabel.build</groupId>
+        <artifactId>embabel-build-parent</artifactId>
+        <version>2.0.2</version>
+        <relativePath/>
     </parent>
 
+    <groupId>com.embabel.rag</groupId>
     <artifactId>embabel-rag-oracle-sample</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+
     <name>Embabel RAG Oracle Sample</name>
-    <description>Minimal Java sample for embabel-rag-oracle</description>
+    <description>CLI and UI samples for embabel-rag-oracle</description>
+    <url>https://github.com/psilberk/embabel-rag-oracle-sample</url>
+
+    <scm>
+        <connection>scm:git:https://github.com/psilberk/embabel-rag-oracle-sample.git</connection>
+        <developerConnection>scm:git:git@github.com:psilberk/embabel-rag-oracle-sample.git</developerConnection>
+        <url>https://github.com/psilberk/embabel-rag-oracle-sample</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <properties>
+        <embabel-agent.version>1.5.2</embabel-agent.version>
+        <application.main-class>com.embabel.agent.rag.oracle.sample.ui.OracleUiSampleApplication</application.main-class>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.embabel.agent</groupId>
+                <artifactId>embabel-agent-dependencies</artifactId>
+                <version>${embabel-agent.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
     <dependencies>
         <dependency>
             <groupId>com.embabel.rag</groupId>
             <artifactId>embabel-rag-oracle</artifactId>
-            <version>${project.version}</version>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.embabel.agent</groupId>
+            <artifactId>embabel-agent-starter-ollama</artifactId>
         </dependency>
 
         <dependency>
@@ -33,9 +66,31 @@
         </dependency>
 
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc11</artifactId>
             <scope>runtime</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webmvc-test</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
@@ -44,14 +99,14 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <release>${java.version}</release>
-                </configuration>
             </plugin>
 
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>${application.main-class}</mainClass>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
@@ -62,5 +117,38 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>cli</id>
+            <properties>
+                <application.main-class>com.embabel.agent.rag.oracle.sample.cli.OracleSampleApplication</application.main-class>
+            </properties>
+        </profile>
+    </profiles>
+
+    <repositories>
+        <repository>
+            <id>embabel-releases</id>
+            <url>https://repo.embabel.com/artifactory/libs-release</url>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>embabel-snapshots</id>
+            <url>https://repo.embabel.com/artifactory/libs-snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>spring-milestones</id>
+            <url>https://repo.spring.io/milestone</url>
+        </repository>
+    </repositories>
 
 </project>

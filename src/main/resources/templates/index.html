@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Oracle RAG Comparison Demo</title>
+  <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <main>
+    <h1>Embabel Oracle RAG Comparison</h1>
+    <p>This demo compares a no-RAG answer versus a RAG answer over Oracle Vector Search.</p>
+    <p>Load sample documents using <code>src/main/resources/sql/oracle_rag_demo_setup.sql</code>.</p>
+
+    <section class="controls">
+      <label for="q">Question</label>
+      <input id="q" type="text" value="How does Oracle vector indexing help search?">
+      <div class="buttons">
+        <button id="plainBtn">Ask (No RAG)</button>
+        <button id="ragBtn">Ask (With RAG)</button>
+        <button id="searchBtn">Show Retrieval Hits</button>
+      </div>
+    </section>
+
+    <section>
+      <h2>Output</h2>
+      <pre id="out">Run a query to see results.</pre>
+    </section>
+  </main>
+
+  <script>
+    const q = document.getElementById('q');
+    const out = document.getElementById('out');
+
+    async function run(url) {
+      const resp = await fetch(url + encodeURIComponent(q.value));
+      const body = await resp.json();
+      out.textContent = JSON.stringify(body, null, 2);
+    }
+
+    document.getElementById('plainBtn').onclick = () => run('/api/ask/plain?q=');
+    document.getElementById('ragBtn').onclick = () => run('/api/ask/rag?q=');
+    document.getElementById('searchBtn').onclick = () => run('/api/search?q=');
+  </script>
+</body>
+</html>
